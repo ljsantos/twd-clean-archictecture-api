@@ -19,4 +19,11 @@ export class InMemoryUserRepository implements UserRepository {
         }
         return null
     }
+
+    async exists(user: UserData): Promise<boolean> {
+        if (this.findUserByEmail(user.email) === null) {
+            return false
+        }
+        return true
+    }
 }
