@@ -26,4 +26,16 @@ describe('In memory User repository', () => {
         const response = await userRepo.exists({name, email})
         expect(response).toBeTruthy
     })
+
+    test('should include a user in repo if it is added', async () => {
+        const name = 'any_name'
+        const email = 'any@mail.com'
+        const users: UserData[] = []
+        const userAdd: UserData = {name, email}
+        const userRepo = new InMemoryUserRepository(users)
+        userRepo.add(userAdd)
+        const response = await userRepo.exists({name, email})
+        expect(response).toBeTruthy
+
+    })
 })
