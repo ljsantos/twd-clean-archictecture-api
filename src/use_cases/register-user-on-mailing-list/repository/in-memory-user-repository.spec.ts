@@ -47,5 +47,5 @@ describe('In memory User repository', () => {
         const userRepo = new InMemoryUserRepository(users)
         const usersReturned = await userRepo.findAllUsers()
         expect(usersReturned.length).toBe(2)
-    }
+    })
 })
