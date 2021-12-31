@@ -9,6 +9,9 @@ export class InMemoryUserRepository implements UserRepository {
         this.repository = repository
     }
 
+    async add(user: UserData): Promise<void> {
+        this.repository.push(user)
+    }
 
     async findUserByEmail(email: string): Promise<UserData> {
         const users = this.repository.filter((user) => {
