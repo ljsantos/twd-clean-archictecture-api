@@ -1,4 +1,4 @@
-import { left } from "../shared/either";
+import { left, right } from "../shared/either";
 import { InvalidNameError } from "./errors/invalid-name-error";
 
 export class Name {
@@ -13,6 +13,7 @@ export class Name {
         if (!this.validate(name)) {
             return left(new InvalidNameError)
         }
+        return right(new Name(name))
     }
 
     public static validate(name: string): boolean {
