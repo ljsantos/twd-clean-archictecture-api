@@ -2,9 +2,6 @@ import { UserRepository } from '../ports/user-repository'
 import { InMemoryUserRepository } from './repository/in-memory-user-repository'
 import { UserData } from '../../entities/user-data'
 import { RegisterUserOnMailingList } from './register-user-on-mailing-list'
-import { InvalidEmailError } from '../../entities/errors/invalid-email-error'
-import { left } from '../../shared/either'
-import { InvalidNameError } from '../../entities/errors/invalid-name-error'
 
 describe('Register user on mailing list use case', () => {
   test('should add user with complete data to mailing list', async () => {
@@ -24,18 +21,20 @@ describe('Register user on mailing list use case', () => {
     const repo: UserRepository = new InMemoryUserRepository(users)
     const usecase: RegisterUserOnMailingList = new RegisterUserOnMailingList(repo)
     const name = 'any_name'
-    const email = 'anyemail.com'
-    const response = await usecase.RegisterUserOnMailingList({ name, email })
-    expect(response).toEqual(left(new InvalidEmailError()))
+    const invalidEmail = 'anyemail.com'
+    const error = (await usecase.RegisterUserOnMailingList({ name: name, email: invalidEmail })).value as Error
+    expect(error.name).toEqual('InvalidEmailError')
+    expect(error.message).toEqual('Invalid e-mail: ' + invalidEmail + '.')
   })
 
   test('should not add user with invalid name', async () => {
     const users: UserData[] = []
     const repo: UserRepository = new InMemoryUserRepository(users)
     const usecase: RegisterUserOnMailingList = new RegisterUserOnMailingList(repo)
-    const name = 'a'
+    const invalidName = 'a'
     const email = 'any@email.com'
-    const response = await usecase.RegisterUserOnMailingList({ name, email })
-    expect(response).toEqual(left(new InvalidNameError()))
+    const error = (await usecase.RegisterUserOnMailingList({ name: invalidName, email: email })).value as Error
+    expect(error.name).toEqual('InvalidNameError')
+    expect(error.message).toEqual('Invalid name: ' + invalidName + '.')
   })
 })
