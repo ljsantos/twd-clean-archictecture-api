@@ -12,14 +12,18 @@ export class RegisterUserController {
   }
 
   public async handle (request: HttpRequest): Promise<HttpResponse> {
+    const missingParams: string[] = []
     if (!(request.body.name)) {
-      const missingParam = 'name'
-      return badRequest(new MissingParamError(missingParam))
+      missingParams.push('name')
     }
 
     if (!(request.body.email)) {
-      const missingParam = 'email'
-      return badRequest(new MissingParamError(missingParam))
+      missingParams.push('email')
+    }
+
+    if (missingParams.length > 0) {
+      const missingParamResult = missingParams.join(', ').replace(/, ([^,]*)$/, ' and $1') // Substitui última vírgula por "and"
+      return badRequest(new MissingParamError(missingParamResult))
     }
 
     const userData: UserData = request.body
