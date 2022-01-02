@@ -1,4 +1,4 @@
-import { left, right } from '../shared/either'
+import { Either, left, right } from '../shared/either'
 import { InvalidNameError } from './errors/invalid-name-error'
 
 export class Name {
@@ -8,7 +8,7 @@ export class Name {
       this.value = value
     }
 
-    public static create (name: string) {
+    public static create (name: string): Either<InvalidNameError, Name> {
       if (!this.validate(name)) {
         return left(new InvalidNameError(name))
       }
