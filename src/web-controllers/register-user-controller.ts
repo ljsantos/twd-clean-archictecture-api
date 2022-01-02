@@ -17,6 +17,11 @@ export class RegisterUserController {
       return badRequest(new MissingParamError(missingParam))
     }
 
+    if (!(request.body.email)) {
+      const missingParam = 'email'
+      return badRequest(new MissingParamError(missingParam))
+    }
+
     const userData: UserData = request.body
     const response = await this.usecase.RegisterUserOnMailingList(userData)
     if (response.isLeft()) {
