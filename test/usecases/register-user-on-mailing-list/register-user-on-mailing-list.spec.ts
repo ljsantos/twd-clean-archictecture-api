@@ -1,5 +1,5 @@
 import { UserRepository } from '@/use_cases/ports'
-import { InMemoryUserRepository } from '@test/usecases/register-user-on-mailing-list/repository'
+import { InMemoryUserRepository } from '@/use_cases/register-user-on-mailing-list/repository'
 import { UserData } from '@/entities'
 import { RegisterUserOnMailingList } from '@/use_cases/register-user-on-mailing-list'
 
