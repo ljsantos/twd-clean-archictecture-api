@@ -6,8 +6,12 @@ export class MongodbUserRepository implements UserRepository {
   async add (user: UserData): Promise<void> {
     const userCollection = MongoHelper.getCollection('users')
     const exists = await this.exists(user)
+    const _user: UserData = {
+      name: user.name,
+      email: user.email
+    }
     if (!exists) {
-      await userCollection.insertOne(user)
+      await userCollection.insertOne(_user)
     }
   }
 
