@@ -10,7 +10,7 @@ describe('Register user on mailing list use case', () => {
     const usecase: RegisterUserOnMailingList = new RegisterUserOnMailingList(repo)
     const name = 'any_name'
     const email = 'any@email.com'
-    const response = await usecase.RegisterUserOnMailingList({ name, email })
+    const response = await usecase.perform({ name, email })
     const user = await repo.findUserByEmail('any@email.com')
     expect(user.name).toBe('any_name')
     expect(response.value.name).toBe('any_name')
@@ -22,7 +22,7 @@ describe('Register user on mailing list use case', () => {
     const usecase: RegisterUserOnMailingList = new RegisterUserOnMailingList(repo)
     const name = 'any_name'
     const invalidEmail = 'anyemail.com'
-    const error = (await usecase.RegisterUserOnMailingList({ name: name, email: invalidEmail })).value as Error
+    const error = (await usecase.perform({ name: name, email: invalidEmail })).value as Error
     expect(error.name).toEqual('InvalidEmailError')
     expect(error.message).toEqual('Invalid e-mail: ' + invalidEmail + '.')
   })
@@ -33,7 +33,7 @@ describe('Register user on mailing list use case', () => {
     const usecase: RegisterUserOnMailingList = new RegisterUserOnMailingList(repo)
     const invalidName = 'a'
     const email = 'any@email.com'
-    const error = (await usecase.RegisterUserOnMailingList({ name: invalidName, email: email })).value as Error
+    const error = (await usecase.perform({ name: invalidName, email: email })).value as Error
     expect(error.name).toEqual('InvalidNameError')
     expect(error.message).toEqual('Invalid name: ' + invalidName + '.')
   })

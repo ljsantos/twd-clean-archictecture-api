@@ -1,5 +1,5 @@
 import { UserData } from '@/entities'
-import { UserRepository } from '@/use_cases/ports'
+import { UseCase, UserRepository } from '@/use_cases/ports'
 import { RegisterUserOnMailingList } from '@/use_cases/register-user-on-mailing-list'
 import { HttpRequest, HttpResponse } from '@/web-controllers/ports'
 import { RegisterUserController } from '@/web-controllers'
@@ -8,6 +8,18 @@ import { InvalidEmailError, InvalidNameError } from '@/entities/errors'
 import { MissingParamError } from '@/web-controllers/errors'
 
 describe('Sign up web controller', () => {
+  const users: UserData[] = []
+  const repo: UserRepository = new InMemoryUserRepository(users)
+  const usecase: UseCase = new RegisterUserOnMailingList(repo)
+  const controller: RegisterUserController = new RegisterUserController(usecase)
+
+  class ErrorThrowingUseCaseStub implements UseCase {
+    async perform (request: any): Promise<any> {
+      throw Error()
+    }
+  }
+  const errorThrowingUseCaseStub: ErrorThrowingUseCaseStub = new ErrorThrowingUseCaseStub()
+
   test('should return status code 201 when request contais valid user data', async () => {
     const validRequest: HttpRequest = {
       body: {
@@ -15,10 +27,6 @@ describe('Sign up web controller', () => {
         email: 'any@mail.com'
       }
     }
-    const users: UserData[] = []
-    const repo: UserRepository = new InMemoryUserRepository(users)
-    const usecase: RegisterUserOnMailingList = new RegisterUserOnMailingList(repo)
-    const controller: RegisterUserController = new RegisterUserController(usecase)
     const response: HttpResponse = await controller.handle(validRequest)
     expect(response.statusCode).toEqual(201)
     expect(response.body).toEqual(validRequest.body)
@@ -31,10 +39,6 @@ describe('Sign up web controller', () => {
         email: 'any@mail.com'
       }
     }
-    const users: UserData[] = []
-    const repo: UserRepository = new InMemoryUserRepository(users)
-    const usecase: RegisterUserOnMailingList = new RegisterUserOnMailingList(repo)
-    const controller: RegisterUserController = new RegisterUserController(usecase)
     const response: HttpResponse = await controller.handle(requestWithInvalidName)
     expect(response.statusCode).toEqual(400)
     expect(response.body).toBeInstanceOf(InvalidNameError)
@@ -47,10 +51,6 @@ describe('Sign up web controller', () => {
         email: 'invalidmail.com'
       }
     }
-    const users: UserData[] = []
-    const repo: UserRepository = new InMemoryUserRepository(users)
-    const usecase: RegisterUserOnMailingList = new RegisterUserOnMailingList(repo)
-    const controller: RegisterUserController = new RegisterUserController(usecase)
     const response: HttpResponse = await controller.handle(requestWithInvalidEmail)
     expect(response.statusCode).toEqual(400)
     expect(response.body).toBeInstanceOf(InvalidEmailError)
@@ -62,10 +62,6 @@ describe('Sign up web controller', () => {
         email: 'any@mail.com'
       }
     }
-    const users: UserData[] = []
-    const repo: UserRepository = new InMemoryUserRepository(users)
-    const usecase: RegisterUserOnMailingList = new RegisterUserOnMailingList(repo)
-    const controller: RegisterUserController = new RegisterUserController(usecase)
     const response: HttpResponse = await controller.handle(requestWithoutNameParameter)
     expect(response.statusCode).toEqual(400)
     expect(response.body).toBeInstanceOf(MissingParamError)
@@ -78,10 +74,6 @@ describe('Sign up web controller', () => {
         name: 'Any Name'
       }
     }
-    const users: UserData[] = []
-    const repo: UserRepository = new InMemoryUserRepository(users)
-    const usecase: RegisterUserOnMailingList = new RegisterUserOnMailingList(repo)
-    const controller: RegisterUserController = new RegisterUserController(usecase)
     const response: HttpResponse = await controller.handle(requestWithoutEmailParameter)
     expect(response.statusCode).toEqual(400)
     expect(response.body).toBeInstanceOf(MissingParamError)
@@ -93,13 +85,22 @@ describe('Sign up web controller', () => {
       body: {
       }
     }
-    const users: UserData[] = []
-    const repo: UserRepository = new InMemoryUserRepository(users)
-    const usecase: RegisterUserOnMailingList = new RegisterUserOnMailingList(repo)
-    const controller: RegisterUserController = new RegisterUserController(usecase)
     const response: HttpResponse = await controller.handle(requestWithoutEmailParameter)
     expect(response.statusCode).toEqual(400)
     expect(response.body).toBeInstanceOf(MissingParamError)
     expect((response.body as Error).message).toEqual('Missing parameter from request: name and email.')
+  })
+
+  test('should return status code 500 when server raises', async () => {
+    const validRequest: HttpRequest = {
+      body: {
+        name: 'Any name',
+        email: 'any@mail.com'
+      }
+    }
+    const controller: RegisterUserController = new RegisterUserController(errorThrowingUseCaseStub)
+    const response: HttpResponse = await controller.handle(validRequest)
+    expect(response.statusCode).toEqual(500)
+    expect(response.body).toBeInstanceOf(Error)
   })
 })
