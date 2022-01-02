@@ -10,13 +10,13 @@ module.exports = {
     '!**/test/**',
     '!**/config/**'
   ],
-  coverageDirectory: "coverage",
+  coverageDirectory: 'coverage',
   roots: [
-    "<rootDir>/src"
+    '<rootDir>/test'
   ],
-  testEnvironment: "node",
+  testEnvironment: 'node',
   transform: {
-      '.*\\.ts$': 'ts-jest'
-  },
+    '.*\\.ts$': 'ts-jest'
+  }
 
-};
+}
