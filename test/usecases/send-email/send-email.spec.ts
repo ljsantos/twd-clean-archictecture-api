@@ -1,5 +1,6 @@
 import { UserData } from '@/entities'
-import { Either, Right, right } from '@/shared'
+import { InvalidEmailError } from '@/entities/errors'
+import { Either, Left, Right, right } from '@/shared'
 import { MailServiceError } from '@/use_cases/errors'
 import { SendEmail } from '@/use_cases/send-mail'
 import { EmailOptions, EmailService } from '@/use_cases/send-mail/ports'
@@ -46,5 +47,17 @@ describe('Send email to user', () => {
     const response = await useCase.perform(user)
     expect(response).toBeInstanceOf(Right)
     expect((response.value as EmailOptions).to).toEqual(user.name + ' <' + user.email + '>')
+  })
+
+  test('should not to try email with invalid email address', async () => {
+    const mailServiceStub = new MailServiceStub()
+    const useCase = new SendEmail(mailServiceStub, mailOptions)
+    const user: UserData = {
+      name: 'any_name',
+      email: 'invalidmail.com'
+    }
+    const response = await useCase.perform(user)
+    expect(response).toBeInstanceOf(Left)
+    expect((response.value as InvalidEmailError).message).toEqual('Invalid e-mail: ' + user.email + '.')
   })
 })
