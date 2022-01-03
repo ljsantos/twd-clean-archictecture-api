@@ -1,3 +1,4 @@
+import { UserData } from '@/entities'
 import { Either, Right, right } from '@/shared'
 import { MailServiceError } from '@/use_cases/errors'
 import { SendEmail } from '@/use_cases/send-mail'
@@ -37,9 +38,13 @@ describe('Send email to user', () => {
   }
   test('should email user with valid name and email address', async () => {
     const mailServiceStub = new MailServiceStub()
-    const useCase = new SendEmail(mailServiceStub)
-    const response = await useCase.perform(mailOptions)
+    const useCase = new SendEmail(mailServiceStub, mailOptions)
+    const user: UserData = {
+      name: 'any_name',
+      email: 'any@mail.com'
+    }
+    const response = await useCase.perform(user)
     expect(response).toBeInstanceOf(Right)
-    expect(response.value).toEqual(mailOptions)
+    expect((response.value as EmailOptions).to).toEqual(user.name + ' <' + user.email + '>')
   })
 })
