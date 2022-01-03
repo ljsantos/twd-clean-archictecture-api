@@ -1,6 +1,6 @@
 import { UserData } from '@/entities'
 import { InvalidEmailError, InvalidNameError } from '@/entities/errors'
-import { Either, Left, Right, right } from '@/shared'
+import { Either, left, Left, Right, right } from '@/shared'
 import { MailServiceError } from '@/use_cases/errors'
 import { SendEmail } from '@/use_cases/send-mail'
 import { EmailOptions, EmailService } from '@/use_cases/send-mail/ports'
@@ -8,6 +8,12 @@ import { EmailOptions, EmailService } from '@/use_cases/send-mail/ports'
 class MailServiceStub implements EmailService {
   async send (mailOptions: EmailOptions): Promise<Either<MailServiceError, EmailOptions>> {
     return right(mailOptions)
+  }
+}
+
+class FailingMailServiceStub implements EmailService {
+  async send (mailOptions: EmailOptions): Promise<Either<MailServiceError, EmailOptions>> {
+    return left(new MailServiceError())
   }
 }
 
@@ -71,5 +77,17 @@ describe('Send email to user', () => {
     const response = await useCase.perform(user)
     expect(response).toBeInstanceOf(Left)
     expect((response.value as InvalidNameError).message).toEqual('Invalid name: ' + user.name + '.')
+  })
+
+  test('should return error when email service fails', async () => {
+    const failingMailServiceStub = new FailingMailServiceStub()
+    const useCase = new SendEmail(failingMailServiceStub, mailOptions)
+    const user: UserData = {
+      name: 'any name',
+      email: 'any@mail.com'
+    }
+    const response = await useCase.perform(user)
+    expect(response).toBeInstanceOf(Left)
+    expect((response.value as MailServiceError).message).toEqual('Mail service error.')
   })
 })
