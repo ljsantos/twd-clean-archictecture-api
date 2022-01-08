@@ -1,9 +1,9 @@
 import { UserData } from '@/entities'
 import { InvalidEmailError, InvalidNameError } from '@/entities/errors'
 import { Either, left, Left, Right, right } from '@/shared'
-import { MailServiceError } from '@/use_cases/errors'
-import { SendEmail } from '@/use_cases/send-mail'
-import { EmailOptions, EmailService } from '@/use_cases/send-mail/ports'
+import { MailServiceError } from '@/usecases/errors'
+import { SendEmail } from '@/usecases/send-mail'
+import { EmailOptions, EmailService } from '@/usecases/send-mail/ports'
 
 class MailServiceStub implements EmailService {
   async send (mailOptions: EmailOptions): Promise<Either<MailServiceError, EmailOptions>> {

@@ -1,5 +1,5 @@
 import { UserData } from '@/entities'
-import { UseCase } from '@/use_cases/ports'
+import { UseCase } from '@/usecases/ports'
 import { HttpRequest, HttpResponse } from '@/web-controllers/ports'
 import { badRequest, created, serverError } from '@/web-controllers/utils'
 import { MissingParamError } from './errors'

@@ -1,8 +1,9 @@
 import { User, UserData } from '@/entities'
 import { InvalidEmailError, InvalidNameError } from '@/entities/errors'
 import { Either, left, right } from '@/shared'
-import { UseCase } from '@/use_cases/ports'
-import { EmailOptions, EmailService } from '@/use_cases/send-mail/ports'
+import { UseCase } from '@/usecases/ports'
+import { EmailOptions, EmailService } from '@/usecases/send-mail/ports'
+import { MailServiceError } from '@/usecases/errors'
 
 export class SendEmail implements UseCase {
   private readonly emailService: EmailService
@@ -12,7 +13,7 @@ export class SendEmail implements UseCase {
     this.emailOptions = emailOptions
   }
 
-  async perform (request: UserData): Promise<any> {
+  async perform (request: UserData): Promise<Either<MailServiceError, EmailOptions>> {
     const user: UserData = request
     const userOrError: Either<InvalidNameError | InvalidEmailError, User> = User.create(request)
     if (userOrError.isLeft()) {

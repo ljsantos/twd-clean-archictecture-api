@@ -1,9 +1,9 @@
 import { UserData } from '@/entities'
-import { UseCase, UserRepository } from '@/use_cases/ports'
-import { RegisterUserOnMailingList } from '@/use_cases/register-user-on-mailing-list'
+import { UseCase, UserRepository } from '@/usecases/ports'
+import { RegisterUserOnMailingList } from '@/usecases/register-user-on-mailing-list'
 import { HttpRequest, HttpResponse } from '@/web-controllers/ports'
 import { RegisterUserController } from '@/web-controllers'
-import { InMemoryUserRepository } from '@/use_cases/register-user-on-mailing-list/repository'
+import { InMemoryUserRepository } from '@/usecases/register-user-on-mailing-list/repository'
 import { InvalidEmailError, InvalidNameError } from '@/entities/errors'
 import { MissingParamError } from '@/web-controllers/errors'
 

@@ -1,5 +1,5 @@
 import { UserData } from '@/entities'
-import { UserRepository } from '@/use_cases/ports'
+import { UserRepository } from '@/usecases/ports'
 import { MongoHelper } from './helper'
 
 export class MongodbUserRepository implements UserRepository {

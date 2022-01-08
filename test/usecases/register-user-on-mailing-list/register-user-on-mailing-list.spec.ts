@@ -1,21 +1,9 @@
-import { UserRepository } from '@/use_cases/ports'
-import { InMemoryUserRepository } from '@/use_cases/register-user-on-mailing-list/repository'
+import { UserRepository } from '@/usecases/ports'
+import { InMemoryUserRepository } from '@/usecases/register-user-on-mailing-list/repository'
 import { UserData } from '@/entities'
-import { RegisterUserOnMailingList } from '@/use_cases/register-user-on-mailing-list'
+import { RegisterUserOnMailingList } from '@/usecases/register-user-on-mailing-list'
 
 describe('Register user on mailing list use case', () => {
-  test('should add user with complete data to mailing list', async () => {
-    const users: UserData[] = []
-    const repo: UserRepository = new InMemoryUserRepository(users)
-    const usecase: RegisterUserOnMailingList = new RegisterUserOnMailingList(repo)
-    const name = 'any_name'
-    const email = 'any@email.com'
-    const response = await usecase.perform({ name, email })
-    const user = await repo.findUserByEmail('any@email.com')
-    expect(user.name).toBe('any_name')
-    expect(response.value.name).toBe('any_name')
-  })
-
   test('should not add user with invalid email', async () => {
     const users: UserData[] = []
     const repo: UserRepository = new InMemoryUserRepository(users)

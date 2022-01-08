@@ -1,5 +1,5 @@
 import { Either } from '@/shared'
-import { MailServiceError } from '@/use_cases/errors'
+import { MailServiceError } from '@/usecases/errors'
 
 export interface EmailOptions {
   readonly host: string

@@ -1,5 +1,5 @@
 import { RegisterUserController } from '@/web-controllers'
-import { RegisterUserOnMailingList } from '@/use_cases/register-user-on-mailing-list'
+import { RegisterUserOnMailingList } from '@/usecases/register-user-on-mailing-list'
 import { MongodbUserRepository } from '@/external/repositories/mongodb'
 
 export const makeRegisterUserController = (): RegisterUserController => {
