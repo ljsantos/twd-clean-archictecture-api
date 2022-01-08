@@ -1,4 +1,6 @@
 API Requirements
 
 1. Register user on mailing list
+    - e-mail has to be valid [ok]
+    - user has to be valid [ok]
 2. E-mail user with bonus
