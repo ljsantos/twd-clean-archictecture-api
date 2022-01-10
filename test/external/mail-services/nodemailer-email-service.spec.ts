@@ -1,4 +1,5 @@
 import { NodemailerMailService } from '@/external/mail-services'
+import { MailServiceError } from '@/usecases/errors'
 import { EmailOptions } from '@/usecases/send-mail/ports'
 
 const attachmentFilePath = '../resources/text.txt'
@@ -33,9 +34,23 @@ const sendMailMock = jest.fn().mockReturnValueOnce('ok')
 nodemailer.createTransport.mockReturnValue({ sendMail: sendMailMock })
 
 describe('Node mailer mail service adaptor', () => {
+  beforeEach(() => {
+    sendMailMock.mockClear()
+    nodemailer.createTransport.mockClear()
+  })
+
   test('should return ok if email is sent', async () => {
     const nodemailer = new NodemailerMailService()
     const result = await nodemailer.send(mailOptions)
     expect(result.value).toEqual(mailOptions)
+  })
+
+  test('shoul return error if email is not sent', async () => {
+    const nodemailer = new NodemailerMailService()
+    sendMailMock.mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const result = await nodemailer.send(mailOptions)
+    expect(result.value).toBeInstanceOf(MailServiceError)
   })
 })
