@@ -9,7 +9,6 @@ export const adaptRout = (controller: RegisterUserController) => {
       body: req.body
     }
     const httpResponse: HttpResponse = await controller.handle(httpRequest)
-    console.log(JSON.stringify(httpResponse.body, jsonFriendlyErrorReplacer))
     res.status(httpResponse.statusCode).json(JSON.stringify(httpResponse.body, jsonFriendlyErrorReplacer))
   }
 }
