@@ -1,4 +1,4 @@
-import { UserData } from '@/entities'
+import { User, UserData } from '@/entities'
 import { UseCase, UserRepository } from '@/usecases/ports'
 import { RegisterUserOnMailingList } from '@/usecases/register-user-on-mailing-list'
 import { HttpRequest, HttpResponse } from '@/web-controllers/ports'
@@ -6,11 +6,53 @@ import { RegisterUserController } from '@/web-controllers'
 import { InMemoryUserRepository } from '@/usecases/register-user-on-mailing-list/repository'
 import { InvalidEmailError, InvalidNameError } from '@/entities/errors'
 import { MissingParamError } from '@/web-controllers/errors'
+import { RegisterAndSendEmail } from '@/usecases/register-and-send-email'
+import { SendEmail } from '@/usecases/send-mail'
+import { Either, right } from '@/shared'
+import { MailServiceError } from '@/usecases/errors'
+import { EmailService, EmailOptions } from '@/usecases/send-mail/ports'
+
+class MailServiceMock implements EmailService {
+  public timeSendEmailWasCalled = 0
+  async send (mailOptions: EmailOptions): Promise<Either<MailServiceError, EmailOptions>> {
+    this.timeSendEmailWasCalled++
+    return right(mailOptions)
+  }
+}
 
 describe('Sign up web controller', () => {
+  const attachmentFilePath = '../resources/text.txt'
+  const fromName = 'Test'
+  const fromEmail = 'from_email@mail.com'
+  const toName = 'any_name'
+  const toEmail = 'any_email@mail.com'
+  const subject = 'Test e-mail'
+  const emailBody = 'Hello world attachament test'
+  const emailBodyHtml = '<b>Hellow world attachment test</b>'
+  const attachment = [{
+    filename: attachmentFilePath,
+    contentType: 'text/plain'
+  }]
+
+  const mailOptions: EmailOptions = {
+    host: 'test',
+    port: 867,
+    username: 'test',
+    password: 'passwd',
+    from: fromName + ' ' + fromEmail,
+    to: toName + ' <' + toEmail + '>',
+    subject: subject,
+    text: emailBody,
+    html: emailBodyHtml,
+    attachments: attachment
+  }
+
   const users: UserData[] = []
   const repo: UserRepository = new InMemoryUserRepository(users)
-  const usecase: UseCase = new RegisterUserOnMailingList(repo)
+  const mailServiceMock = new MailServiceMock()
+  const registerUserOnMailingListUseCase = new RegisterUserOnMailingList(repo)
+  const sendEmailUseCase = new SendEmail(mailServiceMock, mailOptions)
+  const usecase: UseCase = new RegisterAndSendEmail(registerUserOnMailingListUseCase, sendEmailUseCase)
   const controller: RegisterUserController = new RegisterUserController(usecase)
 
   class ErrorThrowingUseCaseStub implements UseCase {
@@ -29,7 +71,8 @@ describe('Sign up web controller', () => {
     }
     const response: HttpResponse = await controller.handle(validRequest)
     expect(response.statusCode).toEqual(201)
-    expect(response.body).toEqual(validRequest.body)
+    expect((response.body as User).name.value).toEqual(validRequest.body.name)
+    expect((response.body as User).email.value).toEqual(validRequest.body.email)
   })
 
   test('should return status code 400 when request contais invalid name', async () => {
