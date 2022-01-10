@@ -1,7 +1,7 @@
 import { UserData } from '@/entities'
 import { UseCase } from '@/usecases/ports'
 import { HttpRequest, HttpResponse } from '@/web-controllers/ports'
-import { badRequest, created, serverError } from '@/web-controllers/utils'
+import { badRequest, ok, serverError } from '@/web-controllers/utils'
 import { MissingParamError } from './errors'
 
 export class RegisterUserController {
@@ -32,7 +32,7 @@ export class RegisterUserController {
       if (response.isLeft()) {
         return badRequest(response.value)
       }
-      return created(response.value)
+      return ok(response.value)
     } catch (error) {
       return serverError(error)
     }
