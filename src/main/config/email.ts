@@ -11,8 +11,8 @@ export function getEmailOptions (): EmailOptions {
   const mailOptions: EmailOptions = {
     host: process.env.EMAIL_HOST,
     port: Number.parseInt(process.env.EMAIL_PORT),
-    username: process.env.MAIL_USERNAME,
-    password: process.env.MAIL_PASSWORD,
+    username: process.env.EMAIL_USERNAME,
+    password: process.env.EMAIL_PASSWORD,
     from: from,
     to: to,
     subject: 'Mensagem de teste',
