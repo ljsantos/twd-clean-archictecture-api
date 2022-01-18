@@ -148,6 +148,7 @@ Utilizaremos a biblioteca `husky`
     vim .lintstagedrc.json
     vim .huskyrc.json
     ```
+
 3. _Commitando_ alterações:
 
     ```{bash}
@@ -176,3 +177,20 @@ Utilizaremos a biblioteca `husky`
     git add .
     git commit -m "chore: add and configure jest
     ```
+
+7. Configurando o mongo db com o jest:
+
+    Em construção
+
+8. Configurando o dotenv
+
+    Em construção
+
+9. Para rodar o mongodb em um  docker container:
+
+    ```{bash}
+    docker run -d --network mongo-net --name some-mongo -e MONGO_INITDB_ROOT_USERNAME=mongoadmin -e MONGO_INITDB_ROOT_PASSWORD=secret mongo
+    ```
+
+    Para esse comando utilize a seguinte string de conexão:
+    `mongodb://mondoadmin:secret@localhost:27017`
