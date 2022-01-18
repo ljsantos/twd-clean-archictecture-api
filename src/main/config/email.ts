@@ -2,11 +2,11 @@ import { EmailOptions } from '@/usecases/send-mail/ports'
 
 const attachments = [{
   filename: 'text.txt',
-  path: '../../resources.txt'
+  path: 'resources/text.txt'
 }]
 
 export function getEmailOptions (): EmailOptions {
-  const from = 'Lucas J Santos <teste@mailteste.com>'
+  const from = 'Lucas J Santos <lucas@lucasjsantos.com>'
   const to = ''
   const mailOptions: EmailOptions = {
     host: process.env.EMAIL_HOST,
